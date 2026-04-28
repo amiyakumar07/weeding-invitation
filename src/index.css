@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&family=Lato:wght@300;400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-sans: "Lato", ui-sans-serif, system-ui, sans-serif;
+  --font-cinzel: "Cinzel", serif;
+  --font-script: "Great Vibes", cursive;
+  
+  --color-wedding-maroon: #3d0000;
+  --color-wedding-maroon-mid: #5a0a0a;
+  --color-wedding-maroon-light: #7a1515;
+  --color-wedding-gold: #c9a84c;
+  --color-wedding-gold-light: #e4c97e;
+  --color-wedding-cream: #fef9e7;
+}
+
+@layer base {
+  body {
+    @apply bg-wedding-maroon text-gray-800 font-sans leading-relaxed;
+  }
+}
+
+.bg-maroon-gradient {
+  background: radial-gradient(ellipse at center, #6b0f0f 0%, #3d0000 50%, #1a0000 100%);
+}
+
+.text-gold-gradient {
+  background: linear-gradient(to bottom, #e4c97e 0%, #c9a84c 50%, #8b6914 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
