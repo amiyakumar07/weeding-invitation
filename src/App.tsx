@@ -223,7 +223,7 @@ export default function App() {
                 </p>
                 
                 <div className="font-cinzel text-wedding-gold text-lg md:text-4xl border-y border-wedding-gold/20 py-5 px-12 mb-10 tracking-[0.3em] backdrop-blur-[2px] inline-block">
-                  APRIL 04, 2026 | 12:30 PM
+                  APRIL 29, 2026 | 12:30 PM
                 </div>
                 
                 <div className="flex flex-col items-center gap-3 text-wedding-cream/60 font-cinzel text-[10px] md:text-xs tracking-[0.2em] uppercase">
@@ -465,7 +465,7 @@ export default function App() {
           <footer className="py-24 text-center bg-wedding-maroon border-t border-wedding-gold/10">
             <Heart className="text-wedding-gold mx-auto mb-6 animate-pulse" fill="currentColor" size={32} />
             <h2 className="font-script text-wedding-cream text-5xl mb-4">Dibya Ranjan & Sasmita</h2>
-            <p className="font-cinzel text-[9px] tracking-[0.6em] text-wedding-cream/40 mb-10 pb-10 border-b border-wedding-gold/10 inline-block px-10">April 04, 2026 • Bhobara, Odisha</p>
+            <p className="font-cinzel text-[9px] tracking-[0.6em] text-wedding-cream/40 mb-10 pb-10 border-b border-wedding-gold/10 inline-block px-10">April 29, 2026 • Bhobara, Odisha</p>
             <p className="text-[8px] tracking-[0.3em] text-wedding-cream/20 uppercase">&copy; 2026 Celebration of Love | Forbidden to Time</p>
           </footer>
 
