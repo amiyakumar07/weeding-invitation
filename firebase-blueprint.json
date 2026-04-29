@@ -1,0 +1,22 @@
+{
+  "entities": {
+    "RSVP": {
+      "title": "RSVP",
+      "description": "Wedding guest response",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Full name of the guest" },
+        "guests": { "type": "integer", "description": "Number of guests" },
+        "attending": { "type": "string", "enum": ["Joyfully Accepts", "Regretfully Declines"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "guests", "attending", "createdAt"]
+    }
+  },
+  "firestore": {
+    "rsvps/{rsvpId}": {
+      "schema": "RSVP",
+      "description": "Collection of wedding RSVPs"
+    }
+  }
+}

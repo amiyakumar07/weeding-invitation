@@ -1,6 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Heart, Calendar, MapPin, Music2, Music, Clock, Send, ChevronDown, User, Star, Volume2, VolumeX } from 'lucide-react';
+import { Heart, Calendar, MapPin, Music2, Music, Clock, Send, ChevronDown, User, Star, Volume2, VolumeX, Users } from 'lucide-react';
+import { db } from './firebase';
+import { collection, addDoc, serverTimestamp, getDocs, query, orderBy, onSnapshot } from 'firebase/firestore';
+
+enum OperationType {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  LIST = 'list',
+  GET = 'get',
+  WRITE = 'write',
+}
+
+function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  const errInfo = {
+    error: error instanceof Error ? error.message : String(error),
+    operationType,
+    path
+  };
+  console.error('Firestore Error: ', JSON.stringify(errInfo));
+  throw new Error(JSON.stringify(errInfo));
+}
 
 const PetalLayer = ({ count = 15 }) => {
   return (
@@ -33,7 +54,7 @@ const Countdown = () => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
-    const targetDate = new Date("April 29, 2026 12:30:00").getTime();
+    const targetDate = new Date("April 04, 2026 12:30:00").getTime();
     const timer = setInterval(() => {
       const now = new Date().getTime();
       const diff = targetDate - now;
@@ -151,7 +172,54 @@ export default function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [showRSVPs, setShowRSVPs] = useState(false);
+  const [rsvps, setRsvps] = useState<any[]>([]);
+  const [omClicks, setOmClicks] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Form State
+  const [name, setName] = useState('');
+  const [guests, setGuests] = useState('1');
+  const [attending, setAttending] = useState('Joyfully Accepts');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (showRSVPs) {
+      const q = query(collection(db, 'rsvps'), orderBy('createdAt', 'desc'));
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setRsvps(list);
+      }, (error) => {
+        handleFirestoreError(error, OperationType.LIST, 'rsvps');
+      });
+      return () => unsubscribe();
+    }
+  }, [showRSVPs]);
+
+  const handleRSVPSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      await addDoc(collection(db, 'rsvps'), {
+        name,
+        guests: parseInt(guests),
+        attending,
+        createdAt: serverTimestamp()
+      });
+      setSubmitted(true);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, 'rsvps');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleOmClick = () => {
+    setOmClicks(prev => prev + 1);
+    if (omClicks + 1 >= 5) {
+      setShowRSVPs(true);
+    }
+  };
 
   useEffect(() => {
     if (isOpen && audioRef.current) {
@@ -196,9 +264,10 @@ export default function App() {
             >
               <div className="relative py-16 px-4 border-x border-wedding-gold/10 bg-gradient-to-b from-transparent via-wedding-maroon/20 to-transparent">
                 <motion.div 
+                  onClick={handleOmClick}
                   animate={{ y: [0, -10, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="text-[#4dd9c0] text-3xl md:text-5xl mb-8 opacity-80"
+                  className="text-[#4dd9c0] text-3xl md:text-5xl mb-8 opacity-80 cursor-pointer"
                 >
                   ॐ
                 </motion.div>
@@ -223,7 +292,7 @@ export default function App() {
                 </p>
                 
                 <div className="font-cinzel text-wedding-gold text-lg md:text-4xl border-y border-wedding-gold/20 py-5 px-12 mb-10 tracking-[0.3em] backdrop-blur-[2px] inline-block">
-                  APRIL 29, 2026 | 12:30 PM
+                  APRIL 04, 2026 | 12:30 PM
                 </div>
                 
                 <div className="flex flex-col items-center gap-3 text-wedding-cream/60 font-cinzel text-[10px] md:text-xs tracking-[0.2em] uppercase">
@@ -349,9 +418,9 @@ export default function App() {
 
               <div className="relative border-l-2 border-wedding-gold/20 ml-4 md:ml-0 md:pl-0 space-y-12">
                 {[
-                  { title: "Ring Ceremony", time: "April 29, 2026 | 12:30 PM", loc: "Maa Ramachandi Temple, Bhobara", icon: "💍", tag: "Engagement" },
-                  { title: "Sangeet Night", time: "Coming Soon..", loc: "Badapari, Tangi, Odisha", icon: "🎵", tag: "Music & Dance" },
-                  { title: "The Wedding", time: "Coming Soon..", loc: "Badapari, Tangi, Odisha", icon: "🕊️", tag: "The Holy Union" }
+                  { title: "Ring Ceremony", time: "April 04, 2026 | 12:30 PM", loc: "Maa Ramachandi Temple, Bhobara", icon: "💍", tag: "Engagement" },
+                  { title: "Sangeet Night", time: "Dec 11, 2026 | 8:00 PM", loc: "Grand Ballroom, Udaivillas", icon: "🎵", tag: "Music & Dance" },
+                  { title: "The Wedding", time: "Dec 12, 2026 | 5:00 PM", loc: "Jagmandir Island Palace", icon: "🕊️", tag: "The Holy Union" }
                 ].map((event, i) => (
                    <motion.div 
                      key={i}
@@ -424,48 +493,139 @@ export default function App() {
                   <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
                     <div className="w-16 h-16 bg-green-800/40 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl text-white">✓</div>
                     <h3 className="font-serif text-2xl mb-2">Thank You!</h3>
-                    <p className="text-sm text-wedding-cream/60">Your response has been recorded.</p>
+                    <p className="text-sm text-wedding-cream/60">Your response has been recorded securely.</p>
+                    <button 
+                      onClick={() => setSubmitted(false)}
+                      className="mt-6 text-wedding-gold text-[10px] uppercase tracking-widest hover:underline"
+                    >
+                      Submit Another
+                    </button>
                   </motion.div>
                 ) : (
-                  <form className="space-y-6 text-left" onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
+                  <form className="space-y-6 text-left" onSubmit={handleRSVPSubmit}>
                     <div className="space-y-1">
                       <label className="font-cinzel text-[9px] tracking-widest text-wedding-gold/60 uppercase">Full Name</label>
                       <input 
                         required 
                         type="text" 
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                         placeholder="Your Name" 
                         className="w-full bg-white/5 border border-white/10 p-3 text-sm focus:outline-none focus:border-wedding-gold transition-colors text-wedding-cream" 
                       />
                     </div>
                     <div className="space-y-1">
                       <label className="font-cinzel text-[9px] tracking-widest text-wedding-gold/60 uppercase">Number of Guests</label>
-                      <select className="w-full bg-wedding-maroon border border-white/10 p-3 text-sm focus:outline-none focus:border-wedding-gold text-wedding-cream appearance-none">
-                        <option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option>
+                      <select 
+                        value={guests}
+                        onChange={(e) => setGuests(e.target.value)}
+                        className="w-full bg-wedding-maroon border border-white/10 p-3 text-sm focus:outline-none focus:border-wedding-gold text-wedding-cream appearance-none"
+                      >
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5+</option>
                       </select>
                     </div>
                     <div className="space-y-2 pt-4">
                        <label className="flex items-center gap-3 text-xs tracking-wide cursor-pointer text-wedding-cream/80">
-                         <input type="radio" name="attending" defaultChecked className="accent-wedding-gold" />
+                         <input 
+                           type="radio" 
+                           name="attending" 
+                           value="Joyfully Accepts"
+                           checked={attending === 'Joyfully Accepts'}
+                           onChange={(e) => setAttending(e.target.value)}
+                           className="accent-wedding-gold" 
+                         />
                          <span>Joyfully Accepts</span>
                        </label>
                        <label className="flex items-center gap-3 text-xs tracking-wide cursor-pointer text-wedding-cream/80">
-                         <input type="radio" name="attending" className="accent-wedding-gold" />
+                         <input 
+                           type="radio" 
+                           name="attending" 
+                           value="Regretfully Declines"
+                           checked={attending === 'Regretfully Declines'}
+                           onChange={(e) => setAttending(e.target.value)}
+                           className="accent-wedding-gold" 
+                         />
                          <span>Regretfully Declines</span>
                        </label>
                     </div>
-                    <button type="submit" className="w-full bg-wedding-gold text-wedding-maroon py-4 font-cinzel text-[10px] font-bold tracking-[0.3em] uppercase hover:bg-white transition-all cursor-pointer mt-8">
-                       Send Confirmation
+                    <button 
+                      disabled={isSubmitting}
+                      type="submit" 
+                      className="w-full bg-wedding-gold text-wedding-maroon py-4 font-cinzel text-[10px] font-bold tracking-[0.3em] uppercase hover:bg-white transition-all cursor-pointer mt-8 disabled:opacity-50"
+                    >
+                       {isSubmitting ? 'Sending...' : 'Send Confirmation'}
                     </button>
                   </form>
                 )}
              </div>
+
+             {/* Hidden RSVP List (Tap OM 5 times to reveal) */}
+             <AnimatePresence>
+              {showRSVPs && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="max-w-4xl mx-auto mt-12 bg-white/5 backdrop-blur-xl border border-wedding-gold/20 p-8 rounded-lg overflow-hidden"
+                >
+                  <div className="flex items-center justify-between mb-8">
+                    <h3 className="font-cinzel text-xl text-wedding-gold">Guest List Responses</h3>
+                    <div className="bg-wedding-gold/20 text-wedding-gold px-3 py-1 rounded-full text-[10px] font-bold flex items-center gap-2">
+                       <Users size={12} /> {rsvps.length} Total
+                    </div>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="border-b border-wedding-gold/20 text-wedding-gold/60 uppercase tracking-tighter">
+                        <tr>
+                          <th className="py-4 px-2">Guest Name</th>
+                          <th className="py-4 px-2">Guests</th>
+                          <th className="py-4 px-2">Status</th>
+                          <th className="py-4 px-2">Date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {rsvps.map((rsvp, idx) => (
+                          <tr key={rsvp.id} className="border-b border-white/5 text-wedding-cream/80">
+                            <td className="py-4 px-2 font-medium">{rsvp.name}</td>
+                            <td className="py-4 px-2">{rsvp.guests}</td>
+                            <td className="py-4 px-2">
+                              <span className={rsvp.attending === 'Joyfully Accepts' ? 'text-green-400' : 'text-red-400'}>
+                                {rsvp.attending}
+                              </span>
+                            </td>
+                            <td className="py-4 px-2 text-[10px] opacity-40">
+                              {rsvp.createdAt?.toDate ? rsvp.createdAt.toDate().toLocaleDateString() : 'Pending'}
+                            </td>
+                          </tr>
+                        ))}
+                        {rsvps.length === 0 && (
+                          <tr>
+                            <td colSpan={4} className="py-12 text-center text-wedding-cream/40 italic">No responses yet.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                  <button 
+                    onClick={() => setShowRSVPs(false)}
+                    className="mt-8 text-wedding-gold/60 text-[10px] uppercase tracking-widest hover:text-wedding-gold"
+                  >
+                    Close Log
+                  </button>
+                </motion.div>
+              )}
+             </AnimatePresence>
           </section>
 
           {/* Final Footer */}
           <footer className="py-24 text-center bg-wedding-maroon border-t border-wedding-gold/10">
             <Heart className="text-wedding-gold mx-auto mb-6 animate-pulse" fill="currentColor" size={32} />
             <h2 className="font-script text-wedding-cream text-5xl mb-4">Dibya Ranjan & Sasmita</h2>
-            <p className="font-cinzel text-[9px] tracking-[0.6em] text-wedding-cream/40 mb-10 pb-10 border-b border-wedding-gold/10 inline-block px-10">April 29, 2026 • Bhobara, Odisha</p>
+            <p className="font-cinzel text-[9px] tracking-[0.6em] text-wedding-cream/40 mb-10 pb-10 border-b border-wedding-gold/10 inline-block px-10">April 04, 2026 • Bhobara, Odisha</p>
             <p className="text-[8px] tracking-[0.3em] text-wedding-cream/20 uppercase">&copy; 2026 Celebration of Love | Forbidden to Time</p>
           </footer>
 

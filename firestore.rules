@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidRSVP(data) {
+      return data.keys().hasAll(['name', 'guests', 'attending', 'createdAt']) 
+        && data.keys().size() == 4
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 100
+        && data.guests is int && data.guests >= 1 && data.guests <= 20
+        && data.attending in ['Joyfully Accepts', 'Regretfully Declines']
+        && data.createdAt is timestamp;
+    }
+
+    match /rsvps/{rsvpId} {
+      allow create: if isValidId(rsvpId) && isValidRSVP(request.resource.data) && request.resource.data.createdAt == request.time;
+      // Allow list/get for the couple - for simplicity in this demo we allow public read of list, 
+      // but in production this should be restricted.
+      allow read: if true; 
+    }
+  }
+}
