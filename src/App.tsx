@@ -54,7 +54,7 @@ const Countdown = () => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
-    const targetDate = new Date("April 04, 2026 12:30:00").getTime();
+    const targetDate = new Date("April 29, 2026 12:30:00").getTime();
     const timer = setInterval(() => {
       const now = new Date().getTime();
       const diff = targetDate - now;
@@ -418,9 +418,9 @@ export default function App() {
 
               <div className="relative border-l-2 border-wedding-gold/20 ml-4 md:ml-0 md:pl-0 space-y-12">
                 {[
-                  { title: "Ring Ceremony", time: "April 04, 2026 | 12:30 PM", loc: "Maa Ramachandi Temple, Bhobara", icon: "💍", tag: "Engagement" },
-                  { title: "Sangeet Night", time: "Dec 11, 2026 | 8:00 PM", loc: "Grand Ballroom, Udaivillas", icon: "🎵", tag: "Music & Dance" },
-                  { title: "The Wedding", time: "Dec 12, 2026 | 5:00 PM", loc: "Jagmandir Island Palace", icon: "🕊️", tag: "The Holy Union" }
+                  { title: "Ring Ceremony", time: "April 29, 2026 | 12:30 PM", loc: "Maa Ramachandi Temple, Bhobara", icon: "💍", tag: "Engagement" },
+                  { title: "Sangeet Night", time: "Coming Soon", loc: " Badapari, Tangi, Odisha", icon: "🎵", tag: "Music & Dance" },
+                  { title: "The Wedding", time: "Coming Soon", loc: " Badapari, Tangi, Odisha", icon: "🕊️", tag: "The Holy Union" }
                 ].map((event, i) => (
                    <motion.div 
                      key={i}
@@ -625,7 +625,7 @@ export default function App() {
           <footer className="py-24 text-center bg-wedding-maroon border-t border-wedding-gold/10">
             <Heart className="text-wedding-gold mx-auto mb-6 animate-pulse" fill="currentColor" size={32} />
             <h2 className="font-script text-wedding-cream text-5xl mb-4">Dibya Ranjan & Sasmita</h2>
-            <p className="font-cinzel text-[9px] tracking-[0.6em] text-wedding-cream/40 mb-10 pb-10 border-b border-wedding-gold/10 inline-block px-10">April 04, 2026 • Bhobara, Odisha</p>
+            <p className="font-cinzel text-[9px] tracking-[0.6em] text-wedding-cream/40 mb-10 pb-10 border-b border-wedding-gold/10 inline-block px-10">April 29, 2026 • Badapari, Tangi, Odisha</p>
             <p className="text-[8px] tracking-[0.3em] text-wedding-cream/20 uppercase">&copy; 2026 Celebration of Love | Forbidden to Time</p>
           </footer>
 
