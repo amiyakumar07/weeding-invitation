@@ -419,8 +419,8 @@ export default function App() {
               <div className="relative border-l-2 border-wedding-gold/20 ml-4 md:ml-0 md:pl-0 space-y-12">
                 {[
                   { title: "Ring Ceremony", time: "April 29, 2026 | 12:30 PM", loc: "Maa Ramachandi Temple, Bhobara", icon: "💍", tag: "Engagement" },
-                  { title: "Sangeet Night", time: "Coming Soon", loc: " Badapari, Tangi, Odisha", icon: "🎵", tag: "Music & Dance" },
-                  { title: "The Wedding", time: "Coming Soon", loc: " Badapari, Tangi, Odisha", icon: "🕊️", tag: "The Holy Union" }
+                  { title: "Sangeet Night", time: "Coming Soon..", loc: " Badapari, Tangi, Odisha", icon: "🎵", tag: "Music & Dance" },
+                  { title: "The Wedding", time: "Coming Soon..", loc: " Badapari, Tangi, Odisha", icon: "🕊️", tag: "The Holy Union" }
                 ].map((event, i) => (
                    <motion.div 
                      key={i}
