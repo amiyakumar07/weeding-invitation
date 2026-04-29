@@ -20,36 +20,44 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
     path
   };
   console.error('Firestore Error: ', JSON.stringify(errInfo));
-  throw new Error(JSON.stringify(errInfo));
+   throw new Error(JSON.stringify(errInfo));
 }
 
-const PetalLayer = ({ count = 15 }) => {
+const PetalLayer = ({ count = 30 }) => {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
       {[...Array(count)].map((_, i) => (
         <motion.div
           key={i}
-          initial={{ y: -20, x: Math.random() * 100 + "%", rotate: 0, opacity: 0.8 }}
+          initial={{ 
+            y: -100, 
+            x: Math.random() * 100 + "%", 
+            rotate: 0, 
+            opacity: 0,
+            scale: 0.5 + Math.random()
+          }}
           animate={{ 
-            y: "110vh",
-            x: (Math.random() * 100 - 50) + "%",
+            y: "120vh",
+            x: (Math.random() * 120 - 10) + "%",
             rotate: 720,
-            opacity: 0
+            opacity: [0, 0.8, 0.8, 0],
           }}
           transition={{
-            duration: 8 + Math.random() * 10,
+            duration: 10 + Math.random() * 15,
             repeat: Infinity,
-            delay: Math.random() * 10,
+            delay: Math.random() * 15,
             ease: "linear"
           }}
-          className="absolute w-3 h-4 bg-red-800/20 rounded-full blur-[1px]"
-          style={{ borderRadius: '50% 0 50% 0' }}
-        />
+          className="absolute"
+        >
+          <div 
+            className="w-3 h-4 bg-gradient-to-br from-red-400/30 to-wedding-gold/20 backdrop-blur-[1px]" 
+            style={{ borderRadius: '50% 0 50% 0' }}
+          />
+        </motion.div>
       ))}
     </div>
   );
-};
-
 const Countdown = () => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
@@ -407,35 +415,70 @@ export default function App() {
           </section>
 
           {/* Wedding Events */}
-          <section className="py-24 px-6 bg-wedding-maroon text-wedding-cream overflow-hidden">
-            <PetalLayer count={10} />
-            <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-16">
-                <span className="text-[10px] tracking-[0.4em] uppercase text-wedding-gold/60 mb-2 block font-cinzel">A Celebration of Love</span>
-                <h2 className="font-cinzel text-3xl md:text-5xl text-wedding-gold">Wedding Events</h2>
-                <div className="w-20 h-[2px] bg-wedding-gold bg-opacity-40 mx-auto mt-4" />
+          <section className="py-24 px-6 bg-wedding-dark relative overflow-hidden">
+            <PetalLayer count={20} />
+            <div className="max-w-5xl mx-auto relative">
+              <div className="text-center mb-24">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.8 }}
+                  className="inline-block p-4 border border-wedding-gold/20 rounded-full mb-6"
+                >
+                  <Star className="text-wedding-gold animate-spin-slow" size={32} />
+                </motion.div>
+                <span className="text-[10px] tracking-[0.5em] uppercase text-wedding-gold/60 mb-3 block font-cinzel">A CELEBRATION OF LOVE AND TRADITION</span>
+                <h2 className="font-cinzel text-4xl md:text-6xl text-wedding-gold drop-shadow-lg">Wedding Events</h2>
+                <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-wedding-gold to-transparent mx-auto mt-6" />
               </div>
 
-              <div className="relative border-l-2 border-wedding-gold/20 ml-4 md:ml-0 md:pl-0 space-y-12">
+              {/* Central Timeline Line */}
+              <div className="absolute left-[30px] md:left-1/2 top-48 bottom-10 w-[2px] bg-gradient-to-b from-transparent via-wedding-gold/30 to-transparent -translate-x-1/2 hidden md:block" />
+
+              <div className="relative space-y-16">
                 {[
-                  { title: "Ring Ceremony", time: "April 29, 2026 | 12:30 PM", loc: "Maa Ramachandi Temple, Bhobara", icon: "💍", tag: "Engagement" },
-                  { title: "Sangeet Night", time: "Coming Soon..", loc: " Badapari, Tangi, Odisha", icon: "🎵", tag: "Music & Dance" },
-                  { title: "The Wedding", time: "Coming Soon..", loc: " Badapari, Tangi, Odisha", icon: "🕊️", tag: "The Holy Union" }
+                  { title: "Ring Ceremony", time: "April 04, 2026 | 12:30 PM", loc: "Maa Ramachandi Temple, Bhobara", icon: "💍", tag: "Engagement", side: "left" },
+                  { title: "Sangeet Night", time: "Dec 11, 2026 | 8:00 PM", loc: "Grand Ballroom, Udaivillas", icon: "🎵", tag: "Music & Dance", side: "right" },
+                  { title: "The Wedding", time: "Dec 12, 2026 | 5:00 PM", loc: "Jagmandir Island Palace", icon: "🕊️", tag: "The Holy Union", side: "left" }
                 ].map((event, i) => (
                    <motion.div 
                      key={i}
-                     initial={{ opacity: 0, x: -20 }}
-                     whileInView={{ opacity: 1, x: 0 }}
-                     viewport={{ once: true }}
-                     className="relative md:flex md:items-center md:gap-10 pl-10 md:pl-0"
+                     initial={{ opacity: 0, x: event.side === 'left' ? -50 : 50, scale: 0.9 }}
+                     whileInView={{ opacity: 1, x: 0, scale: 1 }}
+                     viewport={{ once: true, margin: "-100px" }}
+                     transition={{ duration: 0.8, delay: i * 0.1, ease: "easeOut" }}
+                     className={`relative flex items-center w-full ${event.side === 'right' ? 'md:flex-row' : 'md:flex-row-reverse'}`}
                    >
-                     <div className="absolute left-[-11px] md:static w-5 h-5 bg-wedding-gold rounded-full flex items-center justify-center text-[10px] text-wedding-maroon z-10">🌸</div>
-                     <div className="bg-wedding-maroon-mid/50 border border-wedding-gold/20 p-8 rounded shadow-2xl flex-1 backdrop-blur-sm">
-                       <span className="text-3xl mb-4 block">{event.icon}</span>
-                       <h3 className="font-serif text-2xl text-wedding-gold mb-2">{event.title}</h3>
-                       <p className="text-xs mb-1 text-wedding-cream/80">{event.time}</p>
-                       <p className="text-[10px] mb-4 text-wedding-cream/60 uppercase tracking-widest">{event.loc}</p>
-                       <span className="text-[9px] uppercase tracking-[0.2em] text-wedding-gold font-cinzel">{event.tag}</span>
+                     {/* Timeline Dot */}
+                     <div className="absolute left-[-15px] md:left-1/2 w-8 h-8 bg-wedding-maroon border-2 border-wedding-gold rounded-full flex items-center justify-center -translate-x-1/2 z-20 shadow-[0_0_15px_rgba(201,168,76,0.5)]">
+                       <div className="w-2 h-2 bg-wedding-gold rounded-full animate-pulse" />
+                     </div>
+
+                     <div className={`w-full md:w-[45%] pl-10 md:pl-0`}>
+                       <motion.div 
+                         whileHover={{ y: -5, scale: 1.02 }}
+                         className="bg-maroon-gradient p-8 md:p-10 rounded-lg border border-wedding-gold/20 shadow-2xl relative group overflow-hidden"
+                       >
+                         {/* Card Glow */}
+                         <div className="absolute inset-0 bg-wedding-gold/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                         
+                         <div className="flex items-center justify-between mb-6">
+                           <span className="text-4xl filter drop-shadow-md">{event.icon}</span>
+                           <span className="text-[10px] uppercase tracking-[0.3em] text-wedding-gold font-cinzel bg-wedding-gold/10 px-3 py-1 rounded-full">{event.tag}</span>
+                         </div>
+                         
+                         <h3 className="font-serif text-3xl text-wedding-cream mb-3 group-hover:text-wedding-gold transition-colors">{event.title}</h3>
+                         <div className="space-y-2">
+                           <div className="flex items-center gap-2 text-wedding-cream/80 text-sm">
+                             <Clock size={16} className="text-wedding-gold/60" />
+                             {event.time}
+                           </div>
+                           <div className="flex items-center gap-2 text-wedding-cream/60 text-[10px] md:text-xs uppercase tracking-widest leading-relaxed">
+                             <MapPin size={16} className="text-wedding-gold/60 shrink-0" />
+                             {event.loc}
+                           </div>
+                         </div>
+                       </motion.div>
                      </div>
                    </motion.div>
                 ))}
