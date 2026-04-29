@@ -292,7 +292,7 @@ export default function App() {
                 </p>
                 
                 <div className="font-cinzel text-wedding-gold text-lg md:text-4xl border-y border-wedding-gold/20 py-5 px-12 mb-10 tracking-[0.3em] backdrop-blur-[2px] inline-block">
-                  APRIL 04, 2026 | 12:30 PM
+                  APRIL 29, 2026 | 12:30 PM
                 </div>
                 
                 <div className="flex flex-col items-center gap-3 text-wedding-cream/60 font-cinzel text-[10px] md:text-xs tracking-[0.2em] uppercase">
